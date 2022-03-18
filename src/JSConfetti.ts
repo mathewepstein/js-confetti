@@ -11,8 +11,7 @@ class ConfettiBatch {
 
   constructor(private canvasContext: CanvasRenderingContext2D) {
     this.shapes = []
-    this.promise = new Promise(
-      (completionCallback) => this.resolvePromise = completionCallback)
+    this.promise = new Promise(completionCallback => (this.resolvePromise = completionCallback))
   }
 
   getBatchCompletePromise(): Promise<void> {
@@ -34,13 +33,13 @@ class ConfettiBatch {
   }
 
   processShapes(
-    time: { timeDelta: number, currentTime: number },
+    time: { timeDelta: number; currentTime: number },
     canvasHeight: number,
     cleanupInvisibleShapes: boolean
   ): void {
     const { timeDelta, currentTime } = time
 
-    this.shapes = this.shapes.filter((shape) => {
+    this.shapes = this.shapes.filter(shape => {
       // Render the shapes in this batch
       shape.updatePosition(timeDelta, currentTime)
       shape.draw(this.canvasContext)
@@ -88,20 +87,17 @@ class JSConfetti {
     const timeDelta = currentTime - this.lastUpdated
 
     const canvasHeight = this.canvas.offsetHeight
-    const cleanupInvisibleShapes = (this.iterationIndex % 10 === 0)
+    const cleanupInvisibleShapes = this.iterationIndex % 10 === 0
 
-    this.activeConfettiBatches = this.activeConfettiBatches.filter((batch) => {
-      batch.processShapes(
-        { timeDelta, currentTime },
-        canvasHeight,
-        cleanupInvisibleShapes)
+    this.activeConfettiBatches = this.activeConfettiBatches.filter(batch => {
+      batch.processShapes({ timeDelta, currentTime }, canvasHeight, cleanupInvisibleShapes)
 
       // Do not remove invisible shapes on every iteration
       if (!cleanupInvisibleShapes) {
         return true
       }
 
-      return !(batch.complete())
+      return !batch.complete()
     })
 
     this.iterationIndex++
@@ -128,13 +124,8 @@ class JSConfetti {
   }
 
   public addConfetti(confettiConfig: IAddConfettiConfig = {}): Promise<void> {
-    const {
-      confettiRadius,
-      confettiNumber,
-      confettiColors,
-      emojis,
-      emojiSize,
-    } = normalizeConfettiConfig(confettiConfig)
+    const { confettiRadius, confettiNumber, confettiColors, emojis, emojiSize, confettiStartEdge } =
+      normalizeConfettiConfig(confettiConfig)
 
     // Use the bounding rect rather tahn the canvas width / height, because
     // .width / .height are unset until a layout pass has been completed. Upon
@@ -145,14 +136,14 @@ class JSConfetti {
     const canvasWidth = canvasRect.width
     const canvasHeight = canvasRect.height
 
-    const yPosition = canvasHeight * 5 / 7
+    const yPosition = (canvasHeight * 5) / 7
 
     const leftConfettiPosition: IPosition = {
-      x: 0,
+      x: confettiStartEdge ? 0 : canvasWidth / 2,
       y: yPosition,
     }
     const rightConfettiPosition: IPosition = {
-      x: canvasWidth,
+      x: confettiStartEdge ? canvasWidth : canvasWidth / 2,
       y: yPosition,
     }
 
@@ -168,6 +159,7 @@ class JSConfetti {
         emojis,
         emojiSize,
         canvasWidth,
+        confettiStartEdge,
       })
 
       const confettiOnTheLeft = new ConfettiShape({
@@ -179,6 +171,7 @@ class JSConfetti {
         emojis,
         emojiSize,
         canvasWidth,
+        confettiStartEdge,
       })
 
       confettiGroup.addShapes(confettiOnTheRight, confettiOnTheLeft)

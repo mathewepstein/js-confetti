@@ -33,7 +33,7 @@ const config: Configuration = {
     new ForkTsCheckerWebpackPlugin(),
     new CopyWebpackPlugin({
       patterns: [{ from: 'static' }],
-    })
+    }),
   ],
 }
 
@@ -41,7 +41,7 @@ if (!isProd) {
   config.devServer = {
     contentBase: path.join(__dirname, 'site_dist'),
     compress: true,
-    port: 9000
+    port: 9000,
   }
 }
 

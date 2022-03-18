@@ -2,9 +2,8 @@ import ReactDOM from 'react-dom'
 import React, { useCallback, useEffect, useRef } from 'react'
 
 import JSConfetti from '../src/index'
-import { generateRandomArrayElement  } from '../src/generateRandomArrayElement'
+import { generateRandomArrayElement } from '../src/generateRandomArrayElement'
 import { IAddConfettiConfig } from '../src/types'
-
 
 const CONFETTI_ARGS: IAddConfettiConfig[] = [
   {},
@@ -16,11 +15,13 @@ const CONFETTI_ARGS: IAddConfettiConfig[] = [
     confettiColors: ['#ffbe0b', '#fb5607', '#ff006e', '#8338ec', '#3a86ff'],
     confettiRadius: 10,
     confettiNumber: 150,
+    confettiStartEdge: false,
   },
   {
     confettiColors: ['#9b5de5', '#f15bb5', '#fee440', '#00bbf9', '#00f5d4'],
     confettiRadius: 6,
     confettiNumber: 300,
+    confettiStartEdge: false,
   },
 ]
 
@@ -32,7 +33,9 @@ function App(): JSX.Element {
 
     const timeoutId = setTimeout(() => {
       if (jsConfettiRef.current) {
-        jsConfettiRef.current.addConfetti(generateRandomArrayElement(CONFETTI_ARGS)).then(() => console.log("Initial batch completed"))
+        jsConfettiRef.current
+          .addConfetti(generateRandomArrayElement(CONFETTI_ARGS))
+          .then(() => console.log('Initial batch completed'))
       }
     }, 1000)
 
@@ -41,17 +44,20 @@ function App(): JSX.Element {
 
   const onButtonClick = useCallback(() => {
     if (jsConfettiRef.current) {
-      jsConfettiRef.current.addConfetti(generateRandomArrayElement(CONFETTI_ARGS)).then(() => console.log("Manual batch completed"))
+      jsConfettiRef.current
+        .addConfetti(generateRandomArrayElement(CONFETTI_ARGS))
+        .then(() => console.log('Manual batch completed'))
     }
   }, [jsConfettiRef])
 
   return (
     <>
-      <button className="button" onClick={onButtonClick}>Click me!</button>
+      <button className='button' onClick={onButtonClick}>
+        Click me!
+      </button>
     </>
   )
 }
-
 
 const appContainer = document.getElementById('app')
 ReactDOM.render(<App />, appContainer)
